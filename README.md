@@ -15,25 +15,29 @@ flowchart TD
     E --> F
     F --> G[Language Model Decoder]
     G --> H[Generated Captions]
+```
 
 # Usage
-Installation
-bash
+## Installation
+```bash
 git clone https://github.com/your-repo/vision-language-model.git
 cd vision-language-model
 pip install torch torchvision timm einops transformers
-Training
-python
-from your_model_file import VisionLanguageModel, VisionLanguageLoss
-
-model = VisionLanguageModel("resnet50", "gpt2")
-loss_fn = VisionLanguageLoss("gpt2")
-
-# Training loop
-embeddings, tokenized_captions, base_attn_dim = model(images, captions)
-loss = loss_fn(embeddings, tokenized_captions, base_attn_dim)
-loss.backward()
-Inference
-python
-generated_caption = model.generate(images)
-print("Generated Caption:", generated_caption)
+```
+## Training
+```python
+from train import train_vlm
+train_vlm("../datasets/coco", "hf-hub:timm/mobilenetv4_conv_aa_large.e230_r448_in12k_ft_in1k", "HuggingFaceTB/SmolLM-135M")
+```
+## Inference
+```python
+image = Image.open(<img_path>).convert("RGB")
+transform = transforms.Compose([
+            transforms.Resize((224, 224)),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+        ])
+images = transform(image).unsqueeze(0)
+model.eval()
+print (model.generate(images))
+```
